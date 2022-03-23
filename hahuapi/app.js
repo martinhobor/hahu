@@ -5,7 +5,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var hahuRouter = require('./routes/hahu')
+var hahuRouter = require('./routes/hahu') 
 
 var mongoose = require('mongoose')
 const MONGODB_URI = 'mongodb://127.0.0.1:27017/hahu'
