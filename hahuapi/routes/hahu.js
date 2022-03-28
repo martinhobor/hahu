@@ -1,7 +1,9 @@
+const { response } = require('express');
 var express = require('express');
 var router = express.Router();
 
 var Hirdetes = require('../models/hirdetes')
+const Kategoria = require('../models/kategoria')
 
 
 router.post('/', function(req, res, next) {
@@ -22,7 +24,7 @@ router.post('/', function(req, res, next) {
             const hirdetes = new Hirdetes({_id, kategoria, cim, leiras, hirdetesDatuma,serulesmentes,arFt,kepUrl})
             hirdetes
                 .save()
-                .then(res.json({
+                .then(res.status(200).json({
                     "message":"A rekord rögzítése sikeres"
         }))
         .catch(err => console.log(err))
@@ -36,16 +38,37 @@ router.post('/', function(req, res, next) {
     
 });
 
+router.get("/:mezo", function(req, res, next){
+    const mezo = req.params.mezo
+    Hirdetes.find()
+    .populate("kategoria","nev -_id")
+    .sort({[mezo]:1})
+    .then(response =>{
+        res.json(response)
+    })
+    .catch(err => console.log(err))
+})
+
 router.get("/", function(req, res, next){
     Hirdetes
     .find()
     .then(hirdetesek => {
         res.json(hirdetesek)
     })
+    .catch(err => console.log(err))
 })
 
 router.delete("/:id", function(req, res, next){
     const id = req.params.id
+
+    Hirdetes
+    .findById(id)
+    .then(response =>{
+        if (response === null) {
+            return res.json({'error': `A hirdetes ${id} azonosítoval nem létezik`})
+        }
+    })
+
     Hirdetes
     .findByIdAndDelete(id)
     .then(res.json({
